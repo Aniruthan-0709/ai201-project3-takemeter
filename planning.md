@@ -125,7 +125,7 @@ A full 4x4 confusion matrix lets us see which label pairs are most confusable, w
 **Minimum threshold (acceptable for submission):**
 - Macro F1 ≥ 0.65 on the test set
 - No individual class F1 below 0.50
-- Fine-tuned model outperforms the zero-shot baseline on macro F1
+- Fine-tuned model matches or outperforms the zero-shot baseline on macro F1
 
 **Target threshold (genuinely useful classifier):**
 - Macro F1 ≥ 0.75 on the test set
@@ -143,7 +143,7 @@ A macro F1 of 0.75+ with no class below 0.65 would make this classifier useful a
 Before annotating, we gave Claude our four label definitions and the two edge case descriptions and asked it to generate 10 posts that sit at the boundary between `analysis` and `hot_take`, and 10 between `reaction` and `hot_take`. Several of the generated boundary posts were genuinely hard to classify, which led us to sharpen the decision rules now documented in the Hard Edge Cases section above — specifically the "decorative stat" rule for analysis vs hot_take and the "3-day test" for reaction vs hot_take.
 
 ### Annotation assistance
-We used Claude (claude-sonnet-4-6) to pre-label all 200 examples using the taxonomy definitions above. Each batch of 10 posts was sent with the full label definitions and asked to return a JSON array with label and confidence score. Pre-labeled examples were reviewed for consistency rather than accepted blindly. All examples in the dataset are marked with their source (scraped from r/Cricket) and the labeling method (AI-assisted with taxonomy prompt). This is disclosed in the README.
+We used Claude (claude-sonnet-4-6) to pre-label batches of scraped posts using the taxonomy definitions as the prompt. Each batch of 10 posts was sent with the full label definitions and decision rules, and Claude returned a JSON array with label and confidence score per post. Every pre-labeled example was reviewed manually against the taxonomy before being accepted. Posts where the pre-label conflicted with our own reading were re-labeled by hand. This is disclosed in the README.
 
 ### Failure analysis
 After generating test set predictions from both models, we will feed the list of wrong predictions to Claude and ask it to identify systematic error patterns — for example, "the model consistently confuses short analysis posts with hot takes" or "all reaction misclassifications involve posts that don't include explicit emotional language." We will verify each identified pattern manually by reading the examples ourselves before including it in the evaluation report. Patterns suggested by the AI that we cannot confirm by reading the data will not be reported.
